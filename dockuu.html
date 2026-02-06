@@ -1,0 +1,393 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Duckoo | Roblox Game Development Studio</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/KpYkydzN/duck-transparent-only-bg.png">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React and Babel Standalone for single-file JSX support -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <style>
+    :root {
+      --accent: #FDB600;
+    }
+
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .font-gaming {
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .accent-glow {
+      text-shadow: 0 0 15px rgba(253, 182, 0, 0.4);
+    }
+
+    .bg-grid {
+      background-image: radial-gradient(circle at 2px 2px, rgba(253, 182, 0, 0.05) 1px, transparent 0);
+      background-size: 40px 40px;
+    }
+
+    @keyframes scan {
+      0% { transform: translateY(-100%); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(1000%); opacity: 0; }
+    }
+
+    @keyframes revealChar {
+      from { opacity: 0; transform: translateY(50px) scale(0.8); filter: blur(10px); }
+      to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+
+    .animate-scan {
+      animation: scan 4s linear infinite;
+    }
+
+    .animate-reveal-char {
+      animation: revealChar 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      opacity: 0;
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #333; }
+
+    ::selection {
+      background: #FDB600;
+      color: #000;
+    }
+  </style>
+</head>
+<body class="bg-grid">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const PROJECTS = [
+      {
+        id: '1',
+        title: 'Escape & Dig for Brainrots',
+        category: 'Adventure / Mining',
+        description: 'A chaotic and fast-paced digging adventure where survival is the only goal.',
+        image: 'https://i.ibb.co/rG7y8pb4/no-Filter-6.webp',
+        visits: 'Active'
+      },
+      {
+        id: '2',
+        title: 'Escape Brainrots for Brainrots',
+        category: 'Obby / Survival',
+        description: 'Test your reflexes in this ultimate brainrot escape challenge. Can you survive the memes?',
+        image: 'https://i.ibb.co/sJgFM4jn/thumbnail-1770329720616.png',
+        visits: 'Trending'
+      }
+    ];
+
+    const SOCIALS = [
+      {
+        name: 'X / Twitter',
+        label: 'TWITTER',
+        handle: '@DuckooGames',
+        url: 'https://twitter.com/DuckooGames',
+        icon: 'twitter'
+      },
+      {
+        name: 'Discord',
+        label: 'DISCORD',
+        handle: 'ducko_dev',
+        url: 'https://discord.gg/eUmJxXcjT2',
+        icon: 'discord'
+      },
+      {
+        name: 'Email',
+        label: 'EMAIL',
+        handle: 'duckoorblx@gmail.com',
+        url: 'mailto:duckoorblx@gmail.com',
+        icon: 'email'
+      },
+      {
+        name: 'Roblox',
+        label: 'ROBLOX GROUP',
+        handle: 'Duckoo Games',
+        url: 'https://www.roblox.com/share/g/619805689',
+        icon: 'roblox'
+      }
+    ];
+
+    const Icon = ({ name, className = "" }) => {
+      const paths = {
+        discord: <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.23 10.23 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.196.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.946 2.419-2.157 2.419z" />,
+        twitter: <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />,
+        roblox: <path d="M18.926 23.998L0 18.892 5.075 0 24 5.106zM8.03 14.36l3.92 1.055 1.04-3.83-3.92-1.055z" />,
+        email: <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></g>,
+        'chevron-right': <path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6" />
+      };
+
+      if (!paths[name]) return null;
+      return <svg viewBox="0 0 24 24" fill="currentColor" className={className}>{paths[name]}</svg>;
+    };
+
+    const RevealOnScroll = ({ children, delay = 0 }) => {
+      const [isVisible, setIsVisible] = useState(false);
+      const ref = useRef(null);
+
+      useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            observer.unobserve(entry.target);
+          }
+        }, { threshold: 0.1 });
+        if (ref.current) observer.observe(ref.current);
+        return () => observer.disconnect();
+      }, []);
+
+      return (
+        <div ref={ref} className={`transition-all duration-1000 ease-out transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`} style={{ transitionDelay: `${delay}ms` }}>
+          {children}
+        </div>
+      );
+    };
+
+    const App = () => {
+      const [scrollY, setScrollY] = useState(0);
+      const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+      const [copiedId, setCopiedId] = useState(null);
+
+      useEffect(() => {
+        const handleScroll = () => setScrollY(window.scrollY);
+        const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => {
+          window.removeEventListener('scroll', handleScroll);
+          window.removeEventListener('mousemove', handleMouseMove);
+        };
+      }, []);
+
+      const handleSocialClick = (e, social) => {
+        if (social.name === 'Email') {
+          e.preventDefault();
+          navigator.clipboard.writeText(social.handle).then(() => {
+            setCopiedId(social.name);
+            setTimeout(() => setCopiedId(null), 2000);
+          });
+        }
+      };
+
+      const LOGO_URL = "https://i.ibb.co/wZqsj9D2/content.webp";
+
+      return (
+        <div className="min-h-screen bg-black text-white relative bg-grid selection:bg-[#FDB600] selection:text-black overflow-hidden">
+          <div className="fixed inset-0 pointer-events-none z-10 transition-opacity duration-1000"
+            style={{ background: `radial-gradient(450px circle at ${mousePos.x}px ${mousePos.y}px, rgba(253, 182, 0, 0.12), transparent 80%)` }}
+          />
+
+          <nav className={`fixed top-0 w-full z-50 transition-all duration-300 px-6 md:px-12 py-6 flex justify-between items-center ${scrollY > 50 ? 'bg-black/90 backdrop-blur-xl border-b border-zinc-900' : 'bg-transparent'}`}>
+            <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+              <div className="w-10 h-10 overflow-hidden rounded-lg shadow-[0_0_20px_rgba(253,182,0,0.2)] group-hover:shadow-[0_0_30px_rgba(253,182,0,0.4)] transition-all duration-500">
+                <img src={LOGO_URL} alt="Duckoo Logo" className="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-500" />
+              </div>
+              <span className="font-gaming text-2xl font-black tracking-tighter text-white uppercase italic">DUCKOO</span>
+            </div>
+            <div className="hidden md:flex space-x-8 font-gaming text-xs uppercase tracking-[0.2em] font-bold">
+              <a href="#hero" className="hover:text-[#FDB600] transition-colors">Home</a>
+              <a href="#about" className="hover:text-[#FDB600] transition-colors">About</a>
+              <a href="#portfolio" className="hover:text-[#FDB600] transition-colors">Projects</a>
+              <a href="#social" className="hover:text-[#FDB600] transition-colors">Connect</a>
+            </div>
+            <div className="w-auto md:w-[150px] invisible md:visible"></div>
+          </nav>
+
+          <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20">
+            <div className="text-center space-y-8 max-w-5xl mx-auto relative z-20">
+              <div className="flex justify-center mb-4 transition-transform duration-300 ease-out" style={{ transform: `translate(${(mousePos.x - window.innerWidth/2) * 0.01}px, ${(mousePos.y - window.innerHeight/2) * 0.01}px)` }}>
+                <div className="relative p-1 bg-gradient-to-tr from-[#FDB600] via-[#FDB600]/20 to-transparent rounded-3xl group">
+                  <div className="bg-black w-28 h-28 rounded-2xl overflow-hidden relative shadow-2xl">
+                    <img src={LOGO_URL} alt="Duckoo" className="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute inset-0 w-full h-1 bg-white/10 animate-scan pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-hidden">
+                 <div className="inline-block px-5 py-2 rounded-full border border-[#FDB600]/20 bg-[#FDB600]/5 text-[#FDB600] text-[10px] font-gaming font-black tracking-[0.4em] uppercase animate-reveal-up shadow-[0_0_20px_rgba(253,182,0,0.05)]">
+                  Professional Roblox Studio
+                </div>
+              </div>
+
+              <h1 className="text-8xl md:text-[11rem] font-gaming font-black italic tracking-tighter leading-none text-white uppercase flex justify-center flex-wrap gap-x-2">
+                {['D', 'U', 'C', 'K', 'O', 'O'].map((char, i) => (
+                  <span key={i} className={`inline-block animate-reveal-char ${i >= 3 ? 'text-[#FDB600] accent-glow' : ''}`} style={{ animationDelay: `${i * 0.1}s` }}>{char}</span>
+                ))}
+              </h1>
+
+              <RevealOnScroll delay={800}>
+                <p className="text-xl md:text-3xl font-light text-zinc-400 max-w-3xl mx-auto tracking-wide leading-relaxed px-4">
+                  We engineer immersive <span className="text-white font-semibold italic border-b border-white/20">experiences</span> and high-impact <span className="text-[#FDB600] font-semibold italic accent-glow">meta-worlds</span> for the global gaming community.
+                </p>
+              </RevealOnScroll>
+              
+              <RevealOnScroll delay={1000}>
+                <div className="pt-8 flex flex-col md:flex-row gap-6 justify-center items-center px-6">
+                  <button onClick={() => document.getElementById('portfolio')?.scrollIntoView({behavior: 'smooth'})} className="group relative flex items-center gap-4 bg-white text-black px-12 py-6 rounded-2xl font-gaming font-black text-sm hover:bg-[#FDB600] transition-all duration-500 w-full md:w-auto overflow-hidden shadow-[0_20px_40px_rgba(255,255,255,0.1)]">
+                    <span className="relative z-10">EXPLORE GAMES</span>
+                    <Icon name="chevron-right" className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
+                  </button>
+                  <a href="https://discord.gg/eUmJxXcjT2" target="_blank" className="group relative px-12 py-6 rounded-2xl border border-zinc-800 font-gaming font-black text-sm hover:border-[#FDB600]/50 transition-all duration-500 w-full md:w-auto backdrop-blur-md overflow-hidden">
+                    JOIN COMMUNITY
+                  </a>
+                </div>
+              </RevealOnScroll>
+            </div>
+          </section>
+
+          <section id="about" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-zinc-900/50 relative z-20">
+            <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+              <div className="lg:w-1/2 space-y-8">
+                <RevealOnScroll>
+                  <div className="inline-flex items-center gap-4 text-[#FDB600] font-gaming font-black text-xs tracking-[0.4em] uppercase">
+                    <div className="w-8 h-px bg-[#FDB600]" />
+                    The Studio
+                  </div>
+                  <h2 className="text-6xl md:text-8xl font-gaming font-black italic uppercase italic tracking-tighter leading-none mt-4">
+                    WE ARE <span className="text-[#FDB600]">DUCKOO.</span>
+                  </h2>
+                </RevealOnScroll>
+                <RevealOnScroll delay={200}>
+                  <p className="text-xl md:text-2xl text-zinc-300 font-medium leading-relaxed italic pr-6">
+                    A specialized Roblox development studio born from technical excellence and a passion for viral engagement.
+                  </p>
+                  <div className="h-px w-full bg-gradient-to-r from-zinc-800 to-transparent my-8" />
+                  <p className="text-zinc-500 text-lg leading-relaxed max-w-xl font-medium">
+                    We bridge the gap between imagination and high-performance gameplay. Our collective of veteran developers focuses on high-fidelity visual design, data-driven retention, and unique social mechanics that define the platform's future.
+                  </p>
+                </RevealOnScroll>
+              </div>
+
+              <div className="lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  { id: '01', title: 'Innovation', desc: 'Pushing technical boundaries with custom engines and unique visual styles.' },
+                  { id: '02', title: 'Community', desc: 'Designing experiences that foster social growth and viral player interaction.' },
+                  { id: '03', title: 'Retention', desc: 'Using advanced analytics to engineer deep replayability and longevity.' },
+                  { id: '04', title: 'Quality', desc: 'Professional-grade production standards across all our studio releases.' }
+                ].map((feature, i) => (
+                  <RevealOnScroll key={feature.id} delay={300 + i * 100}>
+                    <div className={`p-8 rounded-[2rem] bg-zinc-900/40 border border-zinc-800 hover:border-[#FDB600]/30 transition-all duration-500 group backdrop-blur-sm ${i % 2 !== 0 ? 'sm:mt-8' : ''}`}>
+                      <div className="text-4xl font-gaming font-black text-white italic mb-2 group-hover:text-[#FDB600]">{feature.id}</div>
+                      <div className="text-xs font-gaming font-black text-[#FDB600] uppercase tracking-widest mb-4">{feature.title}</div>
+                      <p className="text-zinc-500 text-sm leading-relaxed">{feature.desc}</p>
+                    </div>
+                  </RevealOnScroll>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="portfolio" className="py-24 bg-zinc-950/20 border-y border-zinc-900/50 relative z-20">
+            <div className="px-6 md:px-12 max-w-7xl mx-auto">
+              <RevealOnScroll>
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+                  <div className="space-y-4">
+                    <span className="text-[#FDB600] font-gaming font-black tracking-[0.4em] text-xs uppercase">Selected Releases</span>
+                    <h2 className="text-6xl md:text-7xl font-gaming font-black italic uppercase tracking-tighter">OUR GAMES</h2>
+                  </div>
+                  <p className="text-zinc-500 max-w-sm text-lg italic">The latest hits from the Duckoo development lab.</p>
+                </div>
+              </RevealOnScroll>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                {PROJECTS.map((project, idx) => (
+                  <RevealOnScroll key={project.id} delay={idx * 150}>
+                    <div className="group relative h-[500px] rounded-[3rem] overflow-hidden cursor-pointer bg-zinc-900 border border-zinc-800 transition-all duration-700 hover:border-[#FDB600]/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+                      <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-12 flex flex-col justify-end">
+                        <div className="space-y-4 translate-y-8 group-hover:translate-y-0 transition-all duration-700">
+                          <div className="flex items-center gap-3"><span className="px-3 py-1 bg-[#FDB600] text-black text-[10px] font-gaming font-black uppercase tracking-wider rounded-md">{project.category}</span></div>
+                          <h3 className="text-4xl md:text-5xl font-gaming font-black italic text-white group-hover:text-[#FDB600] transition-colors uppercase leading-none tracking-tighter">{project.title}</h3>
+                          <p className="text-zinc-300 text-base max-w-md opacity-0 group-hover:opacity-100 transition-all duration-500 font-medium leading-relaxed">{project.description}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </RevealOnScroll>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="social" className="py-20 px-6 flex justify-center items-center relative z-20">
+            <div className="w-full max-w-6xl bg-[#080808]/80 backdrop-blur-md border border-zinc-900 rounded-[3rem] p-8 md:p-14 relative overflow-hidden shadow-2xl text-center">
+              <div className="relative z-10">
+                <RevealOnScroll>
+                  <div className="mb-12 space-y-4">
+                    <h2 className="text-5xl md:text-7xl lg:text-8xl font-gaming font-black italic uppercase tracking-tighter leading-none mb-4 accent-glow">
+                      LET'S <span className="text-[#FDB600]">CONNECT.</span>
+                    </h2>
+                    <p className="text-zinc-500 text-base md:text-xl max-w-2xl mx-auto font-medium italic opacity-80">
+                      Available for high-impact production and creative direction.
+                    </p>
+                  </div>
+                </RevealOnScroll>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl mx-auto">
+                  {SOCIALS.map((social, idx) => (
+                    <RevealOnScroll key={social.name} delay={idx * 100}>
+                      <a href={social.url} onClick={(e) => handleSocialClick(e, social)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-6 bg-[#0a0a0a] border border-zinc-900/60 p-6 rounded-[2rem] hover:border-[#FDB600]/40 hover:bg-[#111] transition-all duration-500 group relative overflow-hidden text-left h-full">
+                        <div className="relative z-10 w-10 h-10 flex items-center justify-center text-zinc-600 group-hover:text-[#FDB600] transition-all duration-500 group-hover:scale-110">
+                          <Icon name={social.icon} className="w-6 h-6" />
+                        </div>
+                        <div className="relative z-10 space-y-0.5">
+                          <div className={`text-[8px] font-gaming font-black uppercase tracking-[0.3em] transition-colors duration-300 ${copiedId === social.name ? 'text-[#FDB600]' : 'text-zinc-600'}`}>
+                            {copiedId === social.name ? 'COPIED!' : social.label}
+                          </div>
+                          <div className="text-zinc-300 font-bold text-base md:text-lg group-hover:text-white transition-colors tracking-tight">{social.handle}</div>
+                        </div>
+                      </a>
+                    </RevealOnScroll>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <footer className="py-16 border-t border-zinc-900 px-6 bg-transparent relative z-20">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+              <div className="flex flex-col items-center md:items-start space-y-3">
+                 <span className="font-gaming text-xl font-black tracking-tighter text-zinc-500 uppercase italic">DUCKOO STUDIO</span>
+                 <p className="text-zinc-600 text-xs text-center md:text-left leading-relaxed">
+                  Leading the Roblox renaissance with high-fidelity social experiences.
+                </p>
+              </div>
+              <div className="text-zinc-700 text-[10px] font-bold tracking-widest uppercase">
+                © {new Date().getFullYear()} DUCKOO. ALL RIGHTS RESERVED.
+              </div>
+            </div>
+          </footer>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
